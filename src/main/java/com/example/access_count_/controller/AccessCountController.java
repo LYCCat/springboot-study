@@ -19,6 +19,7 @@ public class AccessCountController {
     Map<String, Integer> map = new HashMap<>();
     @Autowired
     private AccessCountService accessCountService;
+
     @GetMapping("/count")
     @ResponseBody
     public String count(HttpServletRequest request) {
@@ -36,12 +37,20 @@ public class AccessCountController {
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody User user) {
 //        if (ObjectUtils.isEmpty(user)) {
-//            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("登录失败");
+//            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("失败");
 //        }
+        String username = user.getUsername();
+
+        if (username == null || username.length() == 0)
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("用户名不能为空");
+        try {
 
             accessCountService.register(user);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("注册失败"+e.getMessage());
+        }
 
-        return ResponseEntity.ok("登录成功");
+        return ResponseEntity.ok("成功");
 
     }
 }
